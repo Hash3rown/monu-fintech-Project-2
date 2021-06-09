@@ -64,25 +64,52 @@ After building and exploring all of our strategies, the question was asked wheth
 ### 2.1 Building EMA Indicators
 <br />
 
-The construction of an EMA variable is pretty straightforward. Both the `9vs20 EMA` and the `50 Vs 200 EMA` strategies give signals based on the value of the **fast signal** (i.e. 9 or 50) relative to that of the **slow signal** (i.e. 20 or 200). When the 'fast signal' is above the 'slow signal', there's said to be a buying/long opportunity. Inversely, when the slow signal is higher than the fast signal, there's said to be a 'selling/shorting' opportunity.
+The construction of an EMA variable is pretty straightforward. Both the `9vs20 EMA` and the `50 Vs 200 EMA` strategies give signals based on the value of the **fast signal** (i.e. 9 or 50) relative to that of the **slow signal** (i.e. 20 or 200). When the 'fast signal' is above the 'slow signal', there's said to be a buying/long opportunity. Inversely, when the slow signal is higher than the fast signal, there's said to be a 'selling/shorting' opportunity. From there, it's a simple matter of programming the position signal for both indicators to `1` when there is a long opportunity, and `-1` if there is a short opportunity.
 
 <br />
 
-From there, it's a simple matter of programming the position signal for both indicators to `1` when there is a long opportunity, and `-1` if there is a short opportunity.
+**Outcome of the EMA9V20**
+
+<img src='images/2.1_indicator_9v20_ema.png' width=800><br>
+<br />
+
+**Outcome of the EMA50V200**
+
+<img src='images/2.1_indicator_50v200_ema.png' width=800><br>
 
 <br />
 
-**EMA9V20**
+As you can see, the EMA50vs200 chart showed that in each of the past 720 periods, the slow 200EMA was above that of the 50EMA. This indicates that for the strategies utilising this indicator, only short / sell opportunities would exist. By contrast, the 9vs20EMA shows a lot more buy and sell signals.
+
+<br />
 
 ### 2.2 Bollinger Bands
 
+
+With Bollinger Bands, you get a 'buy' signal the second the price action drops over one standard deviation below the current 20-period rolling mean closing price. Similarly, 'buy' signals appear when the price drops below one standard deviation below. 
+
+However, after backtesting this signal a few times, we realised that entering a trade the instant price moves outside the 1stdev range is a recipe for trouble. Often, it is simply the first of 3 to 5 periods in which the price continues to rise/fall outside of the range. The implication here being, if you enter a lopng period on the first signal, price is likely to continue to fall, costing your bottom line.
+
+As such, we updated our 'signals' code to only provide a buy/sell signal on the first candle in which price returns back into the `MEAN +- 1 STD` range. Furthermore, as buy/sell signals disappear quickly, the 'signal / position'.
+
+
 <br />
+<img src='images/2.1_indicator_Bollinger1.png' width=800><br>
+
 
 ### 2.3 MACD
 
+The MACD is renowned for being amongst the most popular and widely-used trading indicators. The MACD value/line itself is derived from taking the 26-period EMA from the 12-period EMA. This can be seen as the 'fast signal'. 
+
+Importantly, the macd is plotted in relation to the 9-period EMA 'Signal' line (Read: slow signal). When the MACD line is above the signal line, a buying opportunity exists. When it is below, a selling opportunity exists.
+
+Importantly, many day-traders utilise the MACD for **confirmation.**. I.e. If they believe, based on other indicators, that a surge/drop is coming, they will WAIT for the relevant macd crossover prior to entering the trade.
+
+Below is the price
+
 <br />
 
-### 2.2 Relative Strength Index (RSI)
+### 2.4 Relative Strength Index (RSI)
 
 <br />
 <br />
