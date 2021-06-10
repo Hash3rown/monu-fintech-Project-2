@@ -94,7 +94,7 @@ As such, we updated our 'signals' code to only provide a buy/sell signal on the 
 
 
 <br />
-<img src='images/2.1_indicator_Bollinger1.png' width=800><br>
+<img src='images/2.2_bollinger.png' width=800><br>
 
 
 ### 2.3 MACD
@@ -105,11 +105,24 @@ Importantly, the macd is plotted in relation to the 9-period EMA 'Signal' line (
 
 Importantly, many day-traders utilise the MACD for **confirmation.**. I.e. If they believe, based on other indicators, that a surge/drop is coming, they will WAIT for the relevant macd crossover prior to entering the trade.
 
-Below is the price
-
 <br />
 
+<img src='images/2.3_macd.png' width=800><br>
+
 ### 2.4 Relative Strength Index (RSI)
+
+
+The RSI is a popular momentum indicator used to determine when a market is overbought or oversold. The exact mathematics behind our code can be viewed [here.](https://www.investopedia.com/terms/r/rsi.asp). Generally speaking though, when the RSI hits a value below 30, it is deemed to be 'oversold' and thus 'undervalued'. Hence, a long/buy opportunity may exist in anticipation of an upcoming boost in price. Conversely, when the RSI is above 70, it is deemed to be 'overbought' and hence the price is 'overvalued'. As such, a short/sell opportunity may exist in expectation of an upcoming correction (price drop).
+
+From a programming perspective, the RSI can be viewed as being quite similar to Bollinger bands. For example, it isn't recommended to enter a long position the instant the RSI drops below 30, as the trend which pushed it below may continue for several more periods, pushing price down further and further. This would lead to instantaenous unrealised losses. If the RSI was being used solely as an 'entry signal', it would be wiser to time the entry on the first period in which the RSI closes above 30 once again.
+
+However, in this instance, we aim to use the RSI in place of a 'macro trend indicator' only for strategy 2 (in combination with the MACD). Many day traders use the RSI as an initial suggestion that a smart trade may be coming up, before waiting for a **confirmation** to actually enter the trade. As an example, if the RSI breaches 70, this might suggest to a trader that a short/sell opportunity may arise soon. They would then wait for a confirmation in the short few periods following. In our case, the `macd signal line` crossing above the `macd`. 
+
+<img src='images/2.1_macd_rsi_strategy_example.png' width=800><br>
+
+As such, we programmed the RSI, such that buy/sell signals would linger for several periods following the RSI re-entering a 'fair' price range. The results can be seen in as follows:
+
+<img src='images/2.1_rsi_graphs.png' width=800><br>
 
 <br />
 <br />
@@ -117,17 +130,57 @@ Below is the price
 ***
 
 <br />
-
+<br />
 
 ## 3. Building Strategies
 
+After building the signals, the next task was to build the strategies. A quick refresher on what they were:
 
+
+| Strategy   | Owner    | Indicator 1     | Indicator 2     |
+| ---------- |:--------:| ---------------:| ---------------:|
+| 1          | Tas      | EMA50 vs EMA200 | Bollinger Bands |
+| 2          | Briar    | RSI             | MACD            |
+| 3          | Sreeni   | EMA50 vs EMA200 | MACD            |
+| 4          | Alex     | EMA50 vs EMA200 | EMA9 vs EMA20   |
 <br />
 
 ### 3.1 Strategy 1: EMA50V200 + Bollinger Bands
+ 
+ Combining the EMA50V200 indicator with the Bollinger bands wasn't as straightforward as it sounds. Comparing the current Bollinger position to the previous (1-period shifted) value was paramount in terms of determining the logic for the strategy.
 
+|#   | EMA50v200 | BOLL | BOLLSHIFT       | INTERPRETATION                               |
+|----| ----------|:----:| ---------------:|---------------------------------------------:|
+|1   | -1        |  1   |   1             |  HOLD NO POSITION                            |
+|2   | -1        |  1   |   0             |  HOLD NO POSITION / CLOSE SHORT POSITION     |
+|3   | -1        |  1   |   -1            |  CLOSE SHORT POSITION                        |
+|4   | -1        |  0   |   1             |  HOLD NO POSITION                            |
+|5   | -1        |  0   |   0             |  HOLD POSITION                               |
+|6   | -1        |  0   |   -1            |  HOLD SHORT POSITION                         |
+|7   | -1        |  -1  |    1            |  CLOSE LONG, ENTER SHORT                     |
+|8   | -1        |  -1  |    0            |  ENTER SHORT                                 |
+|9   | -1        |  -1  |  -1             |  HOLD SHORT                                  |
+|10  | 1         | 1    | 1               |  HOLD LONG                                   |
+|11  | 1         | 1    | 0               |  ENTER LONG                                  |
+|12  | 1         | 1    | -1              |  CLOSE SHORT, ENTER LONG                     |
+|13  | 1         | 0    | 1               |  HOLD LONG                                   |
+|14  | 1         | 0    | 0               |  HOLD POSITION                               |
+|15  | 1         | 0    | -1              |  HOLD POSITION                               |
+|16  | 1         | -1   |   1             |  CLOSE LONG                                  |
+|17  | 1         | -1   |   0             |  HOLD POSITION / CLOSE LONG                  |
+|18  | 1         | -1   |   -1            |  HOLD NO POSITION                            |
 
 <br />
+
+Fortunately, in 11 of the above 18 possible scenarios, the interpretation is to hold. This was easily accounted for with an 'else' statement (i.e. else: position = previous position). This meant that only scenarios 3,7,8,11, 12 and 16 required specific programming.
+
+<br />
+
+The below graph showcases the EMA50v200 signals, the bollinger signals, as well as the positions taken based on the two signals coinciding.
+
+<img src='images/2.1_rsi_graphs.png' width=800><br>
+
+
 
 ### 3.2 Strategy 2: RSI + MACD
 
