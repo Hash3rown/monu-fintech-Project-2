@@ -53,11 +53,18 @@ After building and exploring all of our strategies, the question was asked wheth
 
 ***
 
+***
+
+***
+
 
 <br />
 
 ## 2. Building Indicators
 
+<br />
+
+---
 
 <br />
 
@@ -83,8 +90,13 @@ As you can see, the EMA50vs200 chart showed that in each of the past 720 periods
 
 <br />
 
+---
+
+<br />
+
 ### 2.2 Bollinger Bands
 
+<br />
 
 With Bollinger Bands, you get a 'buy' signal the second the price action drops over one standard deviation below the current 20-period rolling mean closing price. Similarly, 'buy' signals appear when the price drops below one standard deviation below. 
 
@@ -96,8 +108,16 @@ As such, we updated our 'signals' code to only provide a buy/sell signal on the 
 <br />
 <img src='images/2.2_bollinger.png' width=800><br>
 
+<br />
+
+---
+
+<br />
+
 
 ### 2.3 MACD
+
+<br />
 
 The MACD is renowned for being amongst the most popular and widely-used trading indicators. The MACD value/line itself is derived from taking the 26-period EMA from the 12-period EMA. This can be seen as the 'fast signal'. 
 
@@ -109,8 +129,15 @@ Importantly, many day-traders utilise the MACD for **confirmation.**. I.e. If th
 
 <img src='images/2.3_macd.png' width=800><br>
 
+<br />
+
+---
+
+<br />
+
 ### 2.4 Relative Strength Index (RSI)
 
+<br />
 
 The RSI is a popular momentum indicator used to determine when a market is overbought or oversold. The exact mathematics behind our code can be viewed [here.](https://www.investopedia.com/terms/r/rsi.asp). Generally speaking though, when the RSI hits a value below 30, it is deemed to be 'oversold' and thus 'undervalued'. Hence, a long/buy opportunity may exist in anticipation of an upcoming boost in price. Conversely, when the RSI is above 70, it is deemed to be 'overbought' and hence the price is 'overvalued'. As such, a short/sell opportunity may exist in expectation of an upcoming correction (price drop).
 
@@ -118,14 +145,25 @@ From a programming perspective, the RSI can be viewed as being quite similar to 
 
 However, in this instance, we aim to use the RSI in place of a 'macro trend indicator' only for strategy 2 (in combination with the MACD). Many day traders use the RSI as an initial suggestion that a smart trade may be coming up, before waiting for a **confirmation** to actually enter the trade. As an example, if the RSI breaches 70, this might suggest to a trader that a short/sell opportunity may arise soon. They would then wait for a confirmation in the short few periods following. In our case, the `macd signal line` crossing above the `macd`. 
 
-<img src='images/2.1_macd_rsi_strategy_example.png' width=800><br>
+
+<img src='images/2.4_macd_rsi_strategy_example.jpeg' width=800><br>
+
 
 As such, we programmed the RSI, such that buy/sell signals would linger for several periods following the RSI re-entering a 'fair' price range. The results can be seen in as follows:
 
-<img src='images/2.1_rsi_graphs.png' width=800><br>
 
 <br />
 <br />
+
+<img src='images/2.4_rsi_graphs.png' width=800><br>
+
+
+<br />
+<br />
+
+***
+
+***
 
 ***
 
@@ -143,9 +181,20 @@ After building the signals, the next task was to build the strategies. A quick r
 | 2          | Briar    | RSI             | MACD            |
 | 3          | Sreeni   | EMA50 vs EMA200 | MACD            |
 | 4          | Alex     | EMA50 vs EMA200 | EMA9 vs EMA20   |
+
+
 <br />
 
+***
+
+<br />
+
+
 ### 3.1 Strategy 1: EMA50V200 + Bollinger Bands
+
+<br />
+
+#### **3.1i) Strategy 1: Building Logic**
  
  Combining the EMA50V200 indicator with the Bollinger bands wasn't as straightforward as it sounds. Comparing the current Bollinger position to the previous (1-period shifted) value was paramount in terms of determining the logic for the strategy.
 
@@ -176,25 +225,193 @@ Fortunately, in 11 of the above 18 possible scenarios, the interpretation is to 
 
 <br />
 
+#### **3.1ii) Strategy 1: Visualisation**
+
 The below graph showcases the EMA50v200 signals, the bollinger signals, as well as the positions taken based on the two signals coinciding.
-
-<img src='images/2.1_rsi_graphs.png' width=800><br>
-
-
-
-### 3.2 Strategy 2: RSI + MACD
 
 
 <br />
 
+
+<img src='images/3.1_ema50v200_boll_strategy.png' width=800><br>
+
+
+<br />
+
+As you can see above, as the EMA50v200 line was negative for most of the time period, and there was only a brief window at the start when long opportunities were said to have existed. Thus, for the rest of the time period, only shorting opportunities arose.
+
+#### **3.1iii) Strategy 1: Backtesting**
+
+<br />
+
+[*** Sreeni, this is where you talk about backtesting]
+
+<br />
+
+---
+
+<br />
+
+### 3.2 Strategy 2: RSI + MACD
+
+<br />
+
+#### **3.2i) Strategy 2: Building Logic**
+
+<br />
+
+The MACD + RSI Strategy was similarly straightforward to put together. 
+
+<br />
+
+|#   | RSI | MACD | MACDSHIFT(-1)    | INTERPRETATION                               |
+|----| ----|:----:| ----------------:|---------------------------------------------:|
+|1   | -1  |  1   |    1             |  HOLD NO POSITION                            |
+|2   | -1  |  1   |   -1             |  CLOSE SHORT                                 |
+|3   | -1  |  -1  |    1             |  ENTER SHORT                                 |
+|4   | -1  |  -1  |   -1             |  HOLD SHORT                                  |
+|5   |  0  |  1   |    1             |  HOLD POSITION                               |
+|6   |  0  |  1   |   -1             |  NO POSITION OR CLOSE SHORT                  |
+|7   |  0  |  -1  |    1             |  NO POSITION OR CLOSE LONG                   |
+|8   |  0  |  -1  |   -1             |  HOLD POSITION                               |
+|9   |  1  |  1   |    1             |  HOLD LONG                                   |
+|10  |  1  |  1   |   -1             |  ENTER LONG                                  |
+|11  |  1  |  -1  |    1             |  CLOSE LONG                                  |
+|12  |  1  |  -1  |   -1             |  HOLD NO POSITION                            |
+
+
+<br />
+
+Similarly to the scenario prior, of the total possible scenarios, 6 scenarios required simply holding the pre-existing position (#1, #4, #5, #8, #9 and #12) - easily coded into the 'else' of the if section. As such, we only had to program 6 other unique scenarios.
+
+<br />
+
+#### **3.2i) Strategy 2: Visualisations**
+
+<br />
+
+The below graph showcases the RSI signals, the macd signals, as well as the positions taken based on the two signals coinciding.
+
+
+<br />
+
+
+<img src='images/3.2_rsi_macd_strategy.jpeg' width=800><br>
+
+#### **3.2i) Strategy 2: Backtesting**
+
+
+<br />
+
+
+<br />
+
+---
+
+<br />
+
+
+
 ### 3.3 Strategy 3: EMA50V200 + MACD
 
+<br />
+
+#### **3.3i) Strategy 3 Building Logic**
+
+<br />
+
+
+|#   | 50v200 | MACD | MACDSHIFT(-1)    | INTERPRETATION                        |
+|----| -------|:----:| ----------------:|--------------------------------------:|
+|1   | 1      |  1   |    1             |  HOLD LONG POSITION                   |
+|2   | 1      |  1   |    0             |  ENTER LONG POSITION                  |
+|3   | 1      |  1   |    -1            |  CLOSE SHORT, ENTER LONG POSITION     |
+|4   | 1      |  0   |    1             |  HOLD POSITION                        | 
+|5   | 1      |  0   |    0             |  HOLD POSITION                        |
+|6   | 1      |  0   |    -1            |  HOLD POSITION                        |
+|7   | 1      | -1   |    1             |  NO POSITION / CLOSE LONG             |
+|8   | 1      | -1   |    0             |  NO POSITION / CLOSE LONG             |
+|9   | 1      | -1   |    -1            |  HOLD NO POSITION                     |
+|10  | -1      |  1   |    1            |  HOLD NO POSITION                    |
+|11  | -1      |  1   |    0            |  NO POSITION / CLOSE SHORT           |
+|12  | -1      |  1   |    -1           |  NO POSITION / CLOSE SHORT           |
+|13  | -1      |  0   |    1            |  HOLD POSITION                       |
+|14  | -1      |  0   |    0            |  HOLD POSITION                       |
+|15  | -1      |  0   |    -1           |  HOLD POSITION                       |
+|16  | -1      | -1   |    1            |  CLOSE LONG, ENTER SHORT POSITION    |
+|17  | -1      | -1   |    0            |  ENTER SHORT POSITION                |
+|18  | -1      | -1   |    -1           |  HOLD SHORT POSITION                 |
+
+<br />
+
+As you can see, 8 scenarios (#1, #4, #5, #6, #9, #10, #13, #14, #15, #18) required simply holding onto the existing position. So, we only had to program 8 additional scenarios.
+
+<br />
+
+#### **3.3i) Strategy 3: Visualisation**
+
+<br />
+
+The below graph showcases the EMA50v200 signals, the macd signals, as well as the positions taken based on the two signals coinciding.
+
+
+<br />
+
+
+<img src='images/3.3_ema50v200_macd_Strategy.png' width=800><br>
+
+<br />
+
+#### **3.3i) Strategy 3: Backtesting**
+
+<br />
+
+---
 
 <br />
 
 ### 3.4 Strategy 4: EMA50V200 + EMA9V20
 
 <br />
+
+#### **3.3i) Strategy 3 Building Logic**
+
+<br />
+
+|#   | 50v200 | 9V20 | 9V20SHIFT    | INTERPRETATION                       |
+|----| -------|:----:| ------------:|-------------------------------------:|
+|1   | 1      |  1   |    -1        |  ENTER LONG POSITION                |
+|1   | 1      |  1   |    1         |  HOLD LONG POSITION                 |
+|1   | 1      |  -1  |   -1         |  HOLD NO POSITION                   |
+|1   | 1      |  -1  |   1          |  CLOSE LONG POSITION                |
+|1   | -1     |  1   |    -1        |  CLOSE SHORT POSITION               |
+|1   | -1     |  1   |    1         |  HOLD NO POSITION                   |
+|1   | -1     |  -1  |   -1         |  HOLD SHORT POSITION                |
+|1   | -1     |  -1  |   1          |  ENTER SHORT POSITION               |
+
+Strategy four had the easiest logic to program, as both signals only have two possible values (-1 and 1). As such, outside of the 'hold' scenarios (position='existing position'), only four scenarios had to be built.
+
+<br />
+
+<br />
+
+
+#### **3.3i) Strategy 3 Visualisation**
+
+<br />
+
+The below graph showcases the EMA50v200 signals, the EMA9V20 signals, as well as the positions taken based on the two signals coinciding.
+
+<br />
+
+
+<img src='images/3.4_ema50200+ema920_strategy.png' width=800><br>
+
+<br />
+
+
+#### **3.3i) Strategy 3 Backtesting**
+
 <br />
 
 ***
