@@ -417,7 +417,7 @@ The below graph showcases the EMA50v200 signals, the EMA9V20 signals, as well as
 
 <br />
 
-<img src='images/Tas_charts/Strat4.png' width=800><br>
+<img src='images/Tas_charts/STrat4.png' width=800><br>
 
 ***
 
