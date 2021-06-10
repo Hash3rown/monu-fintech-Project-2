@@ -431,6 +431,9 @@ Initially attempted to feed our buy/sell indicators (-1, 0, 1) into a random for
 
 From there we changed our approach and used our raw indicator data (EMA/MACD/hourly volume etc) and had a much better result. We created a column signalling  1 for an hourly return > 0 and shifted the column by one row in order to train the model to predict when the NEXT period would see a price increase. 
 
+![image](https://user-images.githubusercontent.com/77593180/121496777-1f6d0480-ca1e-11eb-9ce7-0c6ad65a39e5.png)
+
+
 We tried multiple combinations of indicators as our input data and found the best performance came from using the full set of exponential moving averages. The model accuracy when tested against the actual signal data was .50 (weighted average).
 
 A Support Vector Machine (SVM) model was then used with the same input data and returned a better result (.57 weighted accuracy)
