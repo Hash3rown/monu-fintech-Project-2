@@ -244,6 +244,8 @@ As you can see above, as the EMA50v200 line was negative for most of the time pe
 
 <br />
 
+<img src='images/Tas_charts/Strat1.png' width=800><br>
+
 [*** Sreeni, this is where you talk about backtesting]
 
 <br />
@@ -300,7 +302,7 @@ The below graph showcases the RSI signals, the macd signals, as well as the posi
 
 #### **3.2i) Strategy 2: Backtesting**
 
-
+<img src='images/Tas_charts/Strat2.png' width=800><br>
 <br />
 
 
@@ -366,6 +368,7 @@ The below graph showcases the EMA50v200 signals, the macd signals, as well as th
 
 <br />
 
+<img src='images/Tas_charts/Strat3.png' width=800><br>
 ---
 
 <br />
@@ -374,7 +377,7 @@ The below graph showcases the EMA50v200 signals, the macd signals, as well as th
 
 <br />
 
-#### **3.3i) Strategy 3 Building Logic**
+#### **3.3i) Strategy 4 Building Logic**
 
 <br />
 
@@ -396,7 +399,7 @@ Strategy four had the easiest logic to program, as both signals only have two po
 <br />
 
 
-#### **3.3i) Strategy 3 Visualisation**
+#### **3.3i) Strategy 4 Visualisation**
 
 <br />
 
@@ -410,14 +413,38 @@ The below graph showcases the EMA50v200 signals, the EMA9V20 signals, as well as
 <br />
 
 
-#### **3.3i) Strategy 3 Backtesting**
+#### **3.3i) Strategy 4 Backtesting**
 
 <br />
 
-<img src='images/Tas_charts/Strat3.png' width=800><br>
+<img src='images/Tas_charts/Strat4.png' width=800><br>
 
 ***
 
 <br />
 
 ## 4. Machine Learning Model Development
+
+We elected to pit machine learning against traditional algo trading to see if a more profitable model would result.
+
+Initially attempted to feed our indicators (-1, 0, 1) into a random forest classifier, attempting to predict positive hourly returns, essentially signalling a buy when a positive return was predicted and a sell when a negative return predicted. The Random Forest model performed poorly against test data (heavily weighted toward positive return.
+
+From there we changed our approach and used our raw indicator data (EMA/MACD/hourly volume etc) and had a much better result. We created a column signalling  1 for an hourly return > 0 and shifted the column by one row in order to train the model to predict when the NEXT period would see a price increase. 
+
+We tried multiple combinations of indicators as our input data and found the best performance came from using the full set of exponential moving averages. The model accuracy when tested against the actual signal data was .50 (weighted average).
+
+A Support Vector Machine (SVM) model was then used with the same input data and returned a better result (.57 weighted accuracy)
+
+The predictions from the best performing model were then used to calculate an hourly return simulating the result of purchasing only when the model predicted a positive return. This compared well to the actual hourly return on LINK.
+
+<img src='images/Tas_charts/RFcumret.png' width=800><br>
+
+When backtested using shorts and longs on Chainlink PA over 720 periods the model made 13 trades and was in profit (approx 3%). This was a good result given the asset under test was in a macro bearish downtrend. From a risk management point of view it was great to see that we minimised loss and outperformed the simple process of buying and holding.
+
+<img src='images/Tas_charts/StratML.png' width=800><br>
+
+It did not however outperform our most profitable algorithmic trading strategies.
+
+<img src='images/Tas_charts/StratPerf.png' width=800><br>
+
+Given the model could only be applied to a test dataset (30% of the overall data), it will be interesting to see how it continues to perform into the future.
