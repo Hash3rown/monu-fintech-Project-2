@@ -427,7 +427,7 @@ The below graph showcases the EMA50v200 signals, the EMA9V20 signals, as well as
 
 We elected to pit machine learning against traditional algo trading to see if a more profitable model would result.
 
-Initially attempted to feed our indicators (-1, 0, 1) into a random forest classifier, attempting to predict positive hourly returns, essentially signalling a buy when a positive return was predicted and a sell when a negative return predicted. The Random Forest model performed poorly against test data (heavily weighted toward positive return.
+Initially attempted to feed our buy/sell indicators (-1, 0, 1) into a random forest classifier, attempting to predict positive hourly returns, essentially signalling a buy when a positive return was predicted and a sell when a negative return predicted. The Random Forest model performed poorly against test data (heavily weighted toward positive return.
 
 From there we changed our approach and used our raw indicator data (EMA/MACD/hourly volume etc) and had a much better result. We created a column signalling  1 for an hourly return > 0 and shifted the column by one row in order to train the model to predict when the NEXT period would see a price increase. 
 
